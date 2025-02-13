@@ -17,7 +17,7 @@ const checkAuth = async () => {
     const token = localStorage.getItem('token');
     if (token) {
         try {
-            const response = await api.get('/auth/verify');
+            const response = await api.get('/api/auth/verify');
             if (response.data.success) {
                 setIsAuthenticated(true);
             } else {
