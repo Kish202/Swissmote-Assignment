@@ -14,11 +14,11 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { useAuth } from '../context/AuthContext';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 const categories = ["All", "Conference", "Workshop", "Seminar", "Meetup", "Concert", "Exhibition", "Party", "Technology"];
 
-const EventDashboard = () => {
+const MyEvents = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [date, setDate] = useState(null);
   const [events, setEvents] = useState([]);
@@ -79,43 +79,27 @@ const EventDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen  px-4">
+    <div className="min-h-screen bg-gray-50 px-4">
 
 
 
 
     
 
-      <div className="container mx-auto max-w-3xl mt-6">
+      <div className="container mx-auto max-w-3xl mt-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Button variant="outline" className="w-full md:w-auto">My Events
+          <Button variant="outline" className="w-full md:w-auto" >
+
+
+
           </Button>
           
-          <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>{category}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full text-left font-normal">
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar mode="single" selected={date} onSelect={handleDateChange} initialFocus />
-            </PopoverContent>
-          </Popover>
+          
         </div>
 
-        <div className="grid grid-cols-1 gap-6 ">
+        <div className="grid grid-cols-1 gap-6">
           {loading ? (
             <div className="text-center py-4">Loading events...</div>
           ) : filteredEvents.length === 0 ? (
@@ -152,4 +136,4 @@ const EventDashboard = () => {
 
 
 
-export default EventDashboard;
+export default MyEvents;

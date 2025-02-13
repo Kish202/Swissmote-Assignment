@@ -8,46 +8,42 @@ import { Toaster } from 'react-hot-toast';
 
 import AuthForm from './pages/AuthForm';
 import EventDashboard from './pages/EventDashboard';
+import DashboardLayout from './components/DashboardLayout/DashboardLayout';
 
 function App() {
     return (
         <AuthProvider>
-            <Toaster position='top-right'/>
+            <Toaster position="top-right" />
             <Router>
                 <Routes>
-                    <Route 
-                        path="/auth" 
+                    <Route
+                        path="/auth"
                         element={
                             <PublicRoute>
                                 <AuthForm />
                             </PublicRoute>
-                        } 
+                        }
                     />
-                  
-                    <Route 
-                        path="/dashboard" 
+                    <Route
+                        path="/dashboard"
                         element={
                             <ProtectedRoute>
-                                <EventDashboard />
+                                <DashboardLayout>
+                                    <EventDashboard />
+                                </DashboardLayout>
                             </ProtectedRoute>
-                        } 
+                        }
                     />
-                    {/* Redirect root to dashboard or login based on auth status */}
-                    <Route 
-                        path="/" 
+                    <Route
+                        path="/"
                         element={
                             <ProtectedRoute>
-                                <EventDashboard />
+                                <DashboardLayout>
+                                    <EventDashboard />
+                                </DashboardLayout>
                             </ProtectedRoute>
-                        } 
+                        }
                     />
-
-
-
-      
-    
-
-
                 </Routes>
             </Router>
         </AuthProvider>
