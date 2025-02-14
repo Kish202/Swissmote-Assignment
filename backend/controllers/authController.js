@@ -313,6 +313,42 @@ const getAllEvents = async (req, res) => {
     }
 };
 
+const getMyEvents = async (req, res) => {
+    try {
+        // Find the user and populate their createdEvents
+        console.log('User in request:', req.user); // Debug log
+        const user = await User.findById(req.user._id)
+            .populate({
+                path: 'createdEvents',
+                options: { sort: { createdAt: -1 } }  // Sort by newest first
+            });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            count: user.createdEvents.length,
+            data: user.createdEvents,
+            message: 'Your events fetched successfully'
+        });
+
+    } catch (error) {
+        console.error('Error fetching user events:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching your events',
+            error: error.message
+        });
+    }};
+
+    
+
+
 
 
 module.exports = {
@@ -320,6 +356,7 @@ module.exports = {
     login,
     verifyToken,
     createEvent,
-    getAllEvents
+    getAllEvents,
+    getMyEvents
    
 };

@@ -22,4 +22,4 @@ const validateLoginInput = (req, res, next) => {
     next();
 };
 
-module.exports = validateLoginInput;
+module.exports = {validateLoginInput};
