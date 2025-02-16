@@ -12,7 +12,6 @@ import DashboardLayout from './components/DashboardLayout/DashboardLayout';
 import CreateEventForm from './pages/CreateEventForm';
 import MyEvents from './pages/MyEvents'
 import EditEvent from './pages/EditEvent';
-import EditEventForm from './pages/EditEvent';
 
 function App() {
     return (
@@ -39,18 +38,7 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
-                     <Route
-                        path="/my-events/edit-event/:id"
-                        element={
-                            <ProtectedRoute>
-                                <DashboardLayout>
-<EditEventForm/>
-                                </DashboardLayout>
-                               
-                            </ProtectedRoute>
-                        }
-                    />
-
+                    
                     <Route
                         path="/my-events"
                         element={

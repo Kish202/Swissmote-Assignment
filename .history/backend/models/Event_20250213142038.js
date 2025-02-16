@@ -28,22 +28,22 @@ const eventSchema = new mongoose.Schema({
   startDate: {
     type: Date,
     required: [true, 'Start date is required'],
-    // validate: {
-    //   validator: function(value) {
-    //     return value >= new Date();
-    //   },
-    //   message: 'Start date cannot be in the past'
-    // }
+    validate: {
+      validator: function(value) {
+        return value >= new Date();
+      },
+      message: 'Start date cannot be in the past'
+    }
   },
   endDate: {
     type: Date,
     required: [true, 'End date is required'],
-    // validate: {
-    //   validator: function(value) {
-    //     return value >= this.startDate;
-    //   },
-    //   message: 'End date must be after or equal to start date'
-    // }
+    validate: {
+      validator: function(value) {
+        return value >= this.startDate;
+      },
+      message: 'End date must be after or equal to start date'
+    }
   },
   image: {
     type: String,

@@ -6,12 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useNavigate, useParams } from 'react-router-dom';
-
-
-
-import api from './../config/axios';
+import axios from 'axios';
 
 const EditEventForm = () => {
   const { id } = useParams();
@@ -19,7 +16,6 @@ const EditEventForm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [eventId, setEventId] = useState('');
   const [formData, setFormData] = useState({
     hostName: '',
     eventName: '',
@@ -38,38 +34,22 @@ const EditEventForm = () => {
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const { data } = await api.get(`http://localhost:5000/api/events/my-events/${id}`);
+        const { data } = await axios.get(`http://localhost:5000/api/events/my-events/${id}`);
         
-        console.log(data.data);
         // Convert ISO dates to local datetime format for input fields
         const startDate = new Date(data.data.startDate).toISOString().slice(0, 16);
         const endDate = new Date(data.data.endDate).toISOString().slice(0, 16);
-        setEventId(data.data._id);
+
         setFormData({
           hostName: data.data.hostName,
           eventName: data.data.eventName,
           category: data.data.category,
           description: data.data.description,
-          startDate: startDate,
-          endDate: endDate,
+          startDate: data.data.startDate,
+          endDate: data.data.endDate,
           image: data.data.image
         });
-     
-      // Show existing image preview if available
-    if (data.data.image) {
-      // Add an image preview element in your JSX
-      const imgPreview = document.getElementById('imagePreview');
-      if (imgPreview) {
-        imgPreview.src = data.data.image;
-      }
-    }
-     
-     
-      } 
-      
-      
-
-      catch (err) {
+      } catch (err) {
         toast({
           variant: "destructive",
           title: "Error",
@@ -190,7 +170,7 @@ const EditEventForm = () => {
         }
       });
 
-      const { data } = await api.post(
+      const { data } = await axios.post(
         `http://localhost:5000/api/events/my-events/edit-event/${id}`,
         formDataToSend,
         {
@@ -314,26 +294,15 @@ const EditEventForm = () => {
           </div>
 
           <div className="space-y-2">
-  <Label htmlFor="image">Event Image</Label>
-  {formData.image && (
-    <div className="mb-2">
-      <img 
-        id="imagePreview"
-        src={formData.existingImage} 
-        alt="Current event image" 
-        className="w-32 h-32 object-cover rounded-md"
-      />
-    </div>
-  )}
-  <Input
-    id="image"
-    name="image"
-    type="file"
-    accept="image/*"
-    onChange={handleImageChange}
-  />
-  <p className="text-sm text-gray-500">Leave empty to keep existing image</p>
-</div>
+            <Label htmlFor="image">Event Image (Optional)</Label>
+            <Input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Updating Event...' : 'Update Event'}

@@ -94,7 +94,11 @@ const login = async (req, res) => {
         }
 
         // Generate token
-        const token = generateToken(user._id)
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
 
         res.status(200).json({
             success: true,
@@ -343,156 +347,8 @@ const getMyEvents = async (req, res) => {
 
 
 
-// get events by id only
-const getEventById = async (req, res) => {
-    try {
-        const eventId = req.params.id;
-        const userId = req.user._id;
 
-        // Find the event and populate host details
-        const event = await Event.findOne({ _id: eventId, host: userId })
-            .populate({
-                path: 'host',
-                select: 'username name email -_id' // Include specific user fields, exclude _id
-            })
-            .select('-__v'); // Exclude version key
 
-        if (!event) {
-            return res.status(404).json({
-                success: false,
-                message: 'Event not found or you are not authorized to view this event'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            data: event,
-            message: 'Event details fetched successfully'
-        });
-
-    } catch (error) {
-        console.error('Error fetching event details:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching event details',
-            error: error.message
-        });
-    }
-};
-
-const editEvent = async (req, res) => {
-    try {
-        const eventId = req.params.id;
-        const userId = req.user._id;
-
-        // Find event and verify ownership
-        const event = await Event.findOne({ _id: eventId, host: userId });
-        console.log('Token payload user:', req.user);
-        console.log('Event ID:', eventId);
-        console.log('User ID:', userId);
-        if (!event) {
-            return res.status(404).json({
-                success: false,
-                message: 'Event not found or you are not authorized to edit this event'
-            });
-        }
-
-        const {
-            eventName,
-            category,
-            description,
-            startDate,
-            endDate,
-            hostName
-        } = req.body;
-
-        // // Validate dates if they are being updated
-        // if (startDate || endDate) {
-        //     const start = new Date(startDate || event.startDate);
-        //     const end = new Date(endDate || event.endDate);
-        //     const now = new Date();
-
-        //     if (start < now) {
-        //         return res.status(400).json({
-        //             success: false,
-        //             message: 'Start date cannot be in the past'
-        //         });
-        //     }
-
-        //     if (end < start) {
-        //         return res.status(400).json({
-        //             success: false,
-        //             message: 'End date must be after start date'
-        //         });
-        //     }
-        // }
-
-        // Handle image update if new image is uploaded
-        let imageUrl = event.image; // Keep existing image by default
-        if (req.files && req.files.image) {
-            const file = req.files.image;
-
-            // Validate image type
-            if (!file.mimetype.startsWith('image')) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Please upload an image file'
-                });
-            }
-
-            // Delete original image from Cloudinary if it exists
-            if (event.image) {
-                // Extract public_id from the URL
-                const publicId = event.image.split('/').slice(-1)[0].split('.')[0];
-                // Include folder name in public_id
-                const fullPublicId = `events/${publicId}`;
-                
-                try {
-                    await cloudinary.uploader.destroy(fullPublicId);
-                } catch (deleteError) {
-                    console.error('Error deleting old image:', deleteError);
-                    // Continue with upload even if delete fails
-                }
-            }
-
-            // Upload new image to Cloudinary
-            const result = await cloudinary.uploader.upload(file.tempFilePath, {
-                folder: 'events',
-                resource_type: 'auto'
-            });
-            imageUrl = result.secure_url;
-        }
-
-        // Update event with new data
-        const updatedEvent = await Event.findByIdAndUpdate(
-            eventId,
-            {
-                eventName: eventName || event.eventName,
-                category: category || event.category,
-                description: description || event.description,
-                startDate: startDate || event.startDate,
-                endDate: endDate || event.endDate,
-                hostName: hostName || event.hostName,
-                image: imageUrl
-            },
-            { new: true, runValidators: true }
-        ).populate('host', 'username name email -_id');
-
-        res.status(200).json({
-            success: true,
-            data: updatedEvent,
-            message: 'Event updated successfully'
-        });
-
-    } catch (error) {
-        console.error('Error updating event:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating event',
-            error: error.message
-        });
-    }
-};
 
 
 
@@ -503,7 +359,6 @@ module.exports = {
     createEvent,
     getAllEvents,
     getMyEvents,
-    editEvent,
-    getEventById
+    editEvent
    
 };

@@ -50,9 +50,7 @@ const MyEvents = () => {
     navigate('/auth')
   }
 
-  const handleEditEvent = (eventId) => {
-    navigate(`/my-events/edit-event/${eventId}`);
-  };
+  
 
   return (
     <div className="min-h-screen  px-4">
@@ -95,7 +93,7 @@ const MyEvents = () => {
                     <div className='flex justify-center'>
 
 
-                    <Button variant="outline" className='mx-2' onClick={()=>handleEditEvent(event._id)}>Edit</Button>
+                    <Button variant="outline" className='mx-2' onClick={handleEditEvent(event._id)}>Edit</Button>
 
                     
                     <Button  variant='outline' className='mx-2'>Delete</Button>

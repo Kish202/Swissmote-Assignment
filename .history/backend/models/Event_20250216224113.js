@@ -28,7 +28,7 @@ const eventSchema = new mongoose.Schema({
   startDate: {
     type: Date,
     required: [true, 'Start date is required'],
-    // validate: {
+    validate: {
     //   validator: function(value) {
     //     return value >= new Date();
     //   },

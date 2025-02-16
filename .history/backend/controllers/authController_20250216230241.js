@@ -342,8 +342,6 @@ const getMyEvents = async (req, res) => {
 
 
 
-
-// get events by id only
 const getEventById = async (req, res) => {
     try {
         const eventId = req.params.id;
@@ -503,7 +501,6 @@ module.exports = {
     createEvent,
     getAllEvents,
     getMyEvents,
-    editEvent,
-    getEventById
+    editEvent
    
 };

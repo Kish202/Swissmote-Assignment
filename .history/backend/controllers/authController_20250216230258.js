@@ -503,7 +503,6 @@ module.exports = {
     createEvent,
     getAllEvents,
     getMyEvents,
-    editEvent,
-    getEventById
+    editEvent
    
 };

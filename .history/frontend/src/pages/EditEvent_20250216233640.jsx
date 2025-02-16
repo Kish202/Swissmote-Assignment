@@ -314,26 +314,15 @@ const EditEventForm = () => {
           </div>
 
           <div className="space-y-2">
-  <Label htmlFor="image">Event Image</Label>
-  {formData.image && (
-    <div className="mb-2">
-      <img 
-        id="imagePreview"
-        src={formData.existingImage} 
-        alt="Current event image" 
-        className="w-32 h-32 object-cover rounded-md"
-      />
-    </div>
-  )}
-  <Input
-    id="image"
-    name="image"
-    type="file"
-    accept="image/*"
-    onChange={handleImageChange}
-  />
-  <p className="text-sm text-gray-500">Leave empty to keep existing image</p>
-</div>
+            <Label htmlFor="image">Event Image (Optional)</Label>
+            <Input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Updating Event...' : 'Update Event'}

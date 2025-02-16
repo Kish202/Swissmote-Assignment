@@ -95,7 +95,7 @@ const MyEvents = () => {
                     <div className='flex justify-center'>
 
 
-                    <Button variant="outline" className='mx-2' onClick={()=>handleEditEvent(event._id)}>Edit</Button>
+                    <Button variant="outline" className='mx-2' onClick={(handleEditEvent(event._id)}>Edit</Button>
 
                     
                     <Button  variant='outline' className='mx-2'>Delete</Button>

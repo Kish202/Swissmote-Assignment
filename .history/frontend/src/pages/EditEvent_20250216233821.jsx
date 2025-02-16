@@ -315,7 +315,7 @@ const EditEventForm = () => {
 
           <div className="space-y-2">
   <Label htmlFor="image">Event Image</Label>
-  {formData.image && (
+  {formData.mage && (
     <div className="mb-2">
       <img 
         id="imagePreview"

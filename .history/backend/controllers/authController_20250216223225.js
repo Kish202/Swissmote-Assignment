@@ -343,42 +343,6 @@ const getMyEvents = async (req, res) => {
 
 
 
-// get events by id only
-const getEventById = async (req, res) => {
-    try {
-        const eventId = req.params.id;
-        const userId = req.user._id;
-
-        // Find the event and populate host details
-        const event = await Event.findOne({ _id: eventId, host: userId })
-            .populate({
-                path: 'host',
-                select: 'username name email -_id' // Include specific user fields, exclude _id
-            })
-            .select('-__v'); // Exclude version key
-
-        if (!event) {
-            return res.status(404).json({
-                success: false,
-                message: 'Event not found or you are not authorized to view this event'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            data: event,
-            message: 'Event details fetched successfully'
-        });
-
-    } catch (error) {
-        console.error('Error fetching event details:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching event details',
-            error: error.message
-        });
-    }
-};
 
 const editEvent = async (req, res) => {
     try {
@@ -503,7 +467,6 @@ module.exports = {
     createEvent,
     getAllEvents,
     getMyEvents,
-    editEvent,
-    getEventById
+    editEvent
    
 };

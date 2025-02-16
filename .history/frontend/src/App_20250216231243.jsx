@@ -40,7 +40,7 @@ function App() {
                         }
                     />
                      <Route
-                        path="/my-events/edit-event/:id"
+                        path="/my-events/:id"
                         element={
                             <ProtectedRoute>
                                 <DashboardLayout>

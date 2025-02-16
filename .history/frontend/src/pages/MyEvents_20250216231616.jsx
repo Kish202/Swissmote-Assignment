@@ -15,7 +15,7 @@ import api from '../config/axios';
 const MyEvents = () => {
  
   const [events, setEvents] = useState([]);
-  const [eventId, setEventId] = useState('');
+  
   const [loading, setLoading] = useState(true);
   const {setIsAuthenticated} = useAuth()
   // Fetch events
@@ -23,7 +23,7 @@ const MyEvents = () => {
     const fetchEvents = async () => {
       try {
         const response = await api.get('http://localhost:5000/api/events/get-my-events');
-        if (response.data.success) { setEventId(response.data.data._id);
+        if (response.data.success) {
           setEvents(response.data.data);
           console.log(response.data.data);
           
@@ -50,9 +50,9 @@ const MyEvents = () => {
     navigate('/auth')
   }
 
-  const handleEditEvent = (eventId) => {
-    navigate(`/my-events/edit-event/${eventId}`);
-  };
+  const handleEditEvent=()=>{
+    navigate('/my-events/edit-event/${}')
+  }
 
   return (
     <div className="min-h-screen  px-4">
@@ -95,7 +95,7 @@ const MyEvents = () => {
                     <div className='flex justify-center'>
 
 
-                    <Button variant="outline" className='mx-2' onClick={()=>handleEditEvent(event._id)}>Edit</Button>
+                    <Button variant="outline" className='mx-2' onClick={handleEditEvent}>Edit</Button>
 
                     
                     <Button  variant='outline' className='mx-2'>Delete</Button>

@@ -50,26 +50,11 @@ const EditEventForm = () => {
           eventName: data.data.eventName,
           category: data.data.category,
           description: data.data.description,
-          startDate: startDate,
+          startDate: data.startDate,
           endDate: endDate,
           image: data.data.image
         });
-     
-      // Show existing image preview if available
-    if (data.data.image) {
-      // Add an image preview element in your JSX
-      const imgPreview = document.getElementById('imagePreview');
-      if (imgPreview) {
-        imgPreview.src = data.data.image;
-      }
-    }
-     
-     
-      } 
-      
-      
-
-      catch (err) {
+      } catch (err) {
         toast({
           variant: "destructive",
           title: "Error",
@@ -314,26 +299,15 @@ const EditEventForm = () => {
           </div>
 
           <div className="space-y-2">
-  <Label htmlFor="image">Event Image</Label>
-  {formData.image && (
-    <div className="mb-2">
-      <img 
-        id="imagePreview"
-        src={formData.existingImage} 
-        alt="Current event image" 
-        className="w-32 h-32 object-cover rounded-md"
-      />
-    </div>
-  )}
-  <Input
-    id="image"
-    name="image"
-    type="file"
-    accept="image/*"
-    onChange={handleImageChange}
-  />
-  <p className="text-sm text-gray-500">Leave empty to keep existing image</p>
-</div>
+            <Label htmlFor="image">Event Image (Optional)</Label>
+            <Input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Updating Event...' : 'Update Event'}
