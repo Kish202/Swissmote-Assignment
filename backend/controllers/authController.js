@@ -2,6 +2,8 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
+
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: '24h'
@@ -187,6 +189,8 @@ const verifyToken = async (req, res) => {
 
 
 const Event = require('../models/Event');
+
+const attendeeEvent = require('../models/Eventattendess');
 const cloudinary = require('cloudinary').v2;
 
 const createEvent = async (req, res) => {
@@ -496,6 +500,84 @@ const editEvent = async (req, res) => {
 
 
 
+
+// const attendEvent = async(req, res)=>{
+
+//     try {
+//         const eventId = req.params.id;
+//         const userId = req.user._id;
+        
+//         const event = await Event.findById(eventId);
+//         if (!event) {
+//           return res.status(404).json({ success: false, message: 'Event not found' });
+//         }
+    
+//         const isAttending = event.attendees.includes(userId);
+//         if (isAttending) {
+//           return res.status(400).json({ success: false, message: 'Already attending' });
+//         }
+    
+//         event.attendees.push(userId);
+//         event.attendeeCount += 1;
+//         await event.save();
+    
+//         res.json({ success: true, message: 'Successfully joined event' });
+//       } catch (error) {
+//         res.status(500).json({ success: false, message: error.message });
+//       }
+//     };
+
+
+  
+//  const leaveEvent = async (req, res) => {
+//     try {
+//       const eventId = req.params.id;
+//       const userId = req.user._id;
+      
+//       const event = await Event.findById(eventId);
+//       if (!event) {
+//         return res.status(404).json({ success: false, message: 'Event not found' });
+//       }
+  
+//       event.attendees = event.attendees.filter(id => id.toString() !== userId.toString());
+//       event.attendeeCount = Math.max(0, (event.attendeeCount || 1) - 1);
+//       await event.save();
+  
+//       res.json({ success: true, message: 'Successfully left event' });
+//     } catch (error) {
+//       res.status(500).json({ success: false, message: error.message });
+//     }
+//   };
+
+
+
+    
+    
+    const attendeeList = async (req, res) => {
+    try {
+        const count = await attendeeEvent.countDocuments({ eventId: req.params.eventId });
+        res.json({ success: true, count });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+
+
+
+const attendeeStatus =  async(req, res) => {
+    try {
+        const attendee = await attendeeEvent.findOne({
+            eventId: req.params.eventId,
+            userId: req.params.userId
+        });
+        res.json({ success: true, isAttending: !!attendee });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+
 module.exports = {
     register,
     login,
@@ -504,6 +586,10 @@ module.exports = {
     getAllEvents,
     getMyEvents,
     editEvent,
-    getEventById
+    // attendEvent,
+    getEventById,
+    // leaveEvent,
+    attendeeList,
+    attendeeStatus
    
 };

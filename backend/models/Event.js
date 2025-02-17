@@ -48,6 +48,14 @@ const eventSchema = new mongoose.Schema({
   image: {
     type: String,
     required: [true, 'Event image is required']
+  },
+  attendees: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  attendeeCount: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true
