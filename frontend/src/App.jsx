@@ -13,6 +13,7 @@ import CreateEventForm from './pages/CreateEventForm';
 import MyEvents from './pages/MyEvents'
 import EditEvent from './pages/EditEvent';
 import EditEventForm from './pages/EditEvent';
+import Test from './pages/Test';
 
 function App() {
     return (
@@ -95,9 +96,21 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+
+<Route
+                        path="/test"
+                        element={
+                            <ProtectedRoute>
+                                
+                                    <Test />
+                              
+                            </ProtectedRoute>
+                        }
+                    />
                 </Routes>
             </Router>
         </AuthProvider>
+        
     );
 }
 

@@ -26,9 +26,18 @@ const userSchema = new mongoose.Schema({
     createdEvents: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'
-    }]
+    }],
+    joinedEvents: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Event'
+    }],
+    joinedEventsCount: {
+        type: Number,
+        default: 0
+    }
 }, {
-    timestamps: true
+    timestamps: true,
+    
 });
-
+userSchema.index({ joinedEvents: 1 });
 module.exports = mongoose.model('User', userSchema);

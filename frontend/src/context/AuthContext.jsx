@@ -6,6 +6,7 @@ import api from '../config/axios';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+    const [currentUser, setCurrentUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +37,7 @@ const checkAuth = async () => {
 
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, isLoading }}>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, isLoading, currentUser, setCurrentUser }}>
             {children}
         </AuthContext.Provider>
     );

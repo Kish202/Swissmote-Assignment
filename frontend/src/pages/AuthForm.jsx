@@ -12,7 +12,7 @@ import { useAuth } from '../context/AuthContext';
 
 const AuthForm = () => {
   const navigate = useNavigate();
-  const {setIsAuthenticated} = useAuth()
+  const     {setIsAuthenticated, setCurrentUser} = useAuth()
   
   // Form states
   const [loginData, setLoginData] = useState({ 
@@ -139,7 +139,9 @@ const AuthForm = () => {
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        setIsAuthenticated(true);
+        setCurrentUser(response.data.user);
+        console.log(response.data.user);
+                setIsAuthenticated(true);
         navigate('/dashboard');
       } else {
         setErrors(prev => ({
