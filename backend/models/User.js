@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Password is required'],
         minlength: [7, 'Password must be at least 7 characters long']
     },
+    isGuest: {
+        type: Boolean,
+        default: false
+      },
     createdEvents: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event'

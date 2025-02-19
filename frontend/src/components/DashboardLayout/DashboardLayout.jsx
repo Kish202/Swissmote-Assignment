@@ -7,6 +7,8 @@ const DashboardLayout = ({ children }) => {
 
 
   return (
+
+    
     <>
       <Navbar />
       <div className="flex-1 p-8">{children}</div>

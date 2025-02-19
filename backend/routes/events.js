@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {  createEvent, getAllEvents, getMyEvents, editEvent, getEventById, attendEvent, attendeeList, attendeeStatus} = require( '../controllers/authController');
+const {  createEvent, getAllEvents, getMyEvents, editEvent, getEventById, attendEvent, attendeeList, attendeeStatus, deleteEvent} = require( '../controllers/authController');
 const { checkEventOwnership } = require('../middleware/checkEventOwnership');
 
 
@@ -13,6 +13,8 @@ router.get('/my-events/:id',protect,getEventById)
 
 router.get('/:eventId/attendees', protect, attendeeList);
 router.get('/:eventId/status/:userId', protect, attendeeStatus);
+router.delete('/my-events/:id/delete-event', protect, deleteEvent);
+
 module.exports = router;
 
 

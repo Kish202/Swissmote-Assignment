@@ -193,6 +193,7 @@ const verifyToken = async (req, res) => {
 
 
 
+
 const Event = require('../models/Event');
 
 const attendeeEvent = require('../models/Eventattendess');
@@ -583,6 +584,114 @@ const attendeeStatus =  async(req, res) => {
 }
 
 
+const deleteEvent = async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        const userId = req.user._id;
+
+        // Find event and verify ownership
+        const event = await Event.findOne({ _id: eventId, host: userId });
+        
+        if (!event) {
+            return res.status(404).json({
+                success: false,
+                message: 'Event not found or you are not authorized to delete this event'
+            });
+        }
+
+        // Delete image from Cloudinary if it exists
+        if (event.image) {
+            // Extract public_id from the URL
+            const publicId = event.image.split('/').slice(-1)[0].split('.')[0];
+            // Include folder name in public_id
+            const fullPublicId = `events/${publicId}`;
+            
+            try {
+                await cloudinary.uploader.destroy(fullPublicId);
+            } catch (deleteError) {
+                console.error('Error deleting image from Cloudinary:', deleteError);
+                // Continue with event deletion even if image deletion fails
+            }
+        }
+
+        // Remove event from user's createdEvents array
+        await User.findByIdAndUpdate(
+            userId,
+            { $pull: { createdEvents: eventId } }
+        );
+
+        // Delete the event
+        await Event.findByIdAndDelete(eventId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Event deleted successfully'
+        });
+
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting event',
+            error: error.message
+        });
+    }
+};
+
+
+// Add this to your existing authController.js
+
+const guestLogin = async (req, res) => {
+    try {
+
+
+        // Find existing guest user or create new one
+        let guestUser = await User.findOne({ 
+            username: 'guest_user',
+            isGuest: true 
+        });
+
+
+        if (!guestUser) {
+            // Create a new guest user if doesn't exist
+            guestUser = new User({
+                username: 'guest_user',
+                name: 'Guest User',
+                email: 'guest@example.com',
+                password: await bcrypt.hash(Math.random().toString(36), 10),
+                isGuest: true
+            });
+            await guestUser.save();
+        }
+
+        // Generate token
+        const token = generateToken(guestUser._id);
+        console.log('Guest user:', guestUser);
+
+        res.status(200).json({
+            success: true,
+            token,
+            user: {
+                // id: guestUser._id,
+                // username: guestUser.username,
+                // name: guestUser.name,
+                isGuest: true
+            },
+            message: 'Logged in as guest'
+        });
+
+        console.log('Guest user:', guestUser);
+
+    } catch (error) {
+        console.error('Guest login error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error during guest login'
+        });
+    }
+};
+
+
 module.exports = {
     register,
     login,
@@ -595,6 +704,8 @@ module.exports = {
     getEventById,
     // leaveEvent,
     attendeeList,
-    attendeeStatus
+    attendeeStatus,
+    guestLogin,
+    deleteEvent
    
 };

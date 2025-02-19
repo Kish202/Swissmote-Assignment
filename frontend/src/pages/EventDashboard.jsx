@@ -226,7 +226,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { useAuth } from '../context/AuthContext';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
 const categories = ["All", "Conference", "Workshop", "Seminar", "Meetup", "Concert", "Exhibition", "Party", "Technology"];
@@ -338,9 +338,11 @@ const EventDashboard = () => {
     <div className="min-h-screen px-4">
       <div className="container mx-auto max-w-3xl mt-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Link to="/my-events">
           <Button variant="outline" className="w-full md:w-auto">
             My Events
           </Button>
+          </Link>
           
           <Select value={selectedCategory} onValueChange={handleCategoryChange}>
             <SelectTrigger>

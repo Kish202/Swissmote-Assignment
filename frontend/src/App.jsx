@@ -1,117 +1,124 @@
 // App.js
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import PublicRoute from './components/PublicRoute';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 
-import AuthForm from './pages/AuthForm';
-import EventDashboard from './pages/EventDashboard';
-import DashboardLayout from './components/DashboardLayout/DashboardLayout';
-import CreateEventForm from './pages/CreateEventForm';
-import MyEvents from './pages/MyEvents'
-import EditEvent from './pages/EditEvent';
-import EditEventForm from './pages/EditEvent';
-import Test from './pages/Test';
+import AuthForm from "./pages/AuthForm";
+import EventDashboard from "./pages/EventDashboard";
+import DashboardLayout from "./components/DashboardLayout/DashboardLayout";
+import CreateEventForm from "./pages/CreateEventForm";
+import MyEvents from "./pages/MyEvents";
+import EditEvent from "./pages/EditEvent";
+import EditEventForm from "./pages/EditEvent";
+import Test from "./pages/Test";
+import GuestEventDashboard from "./pages/GuestEventdashboard";
 
 function App() {
-    return (
-        <AuthProvider>
-            <Toaster position="top-right" />
-            <Router>
-                <Routes>
-                    <Route
-                        path="/auth"
-                        element={
-                            <PublicRoute>
-                                <AuthForm />
-                            </PublicRoute>
-                        }
-                    />
-                      <Route
-                        path="/create-event"
-                        element={
-                            <ProtectedRoute>
-                                <DashboardLayout>
-<CreateEventForm/>
-                                </DashboardLayout>
-                               
-                            </ProtectedRoute>
-                        }
-                    />
-                     <Route
-                        path="/my-events/edit-event/:id"
-                        element={
-                            <ProtectedRoute>
-                                <DashboardLayout>
-<EditEventForm/>
-                                </DashboardLayout>
-                               
-                            </ProtectedRoute>
-                        }
-                    />
+  return (
+    <AuthProvider>
+      <Toaster position="top-right" />
+      <Router>
+        <Routes>
+          <Route
+            path="/auth"
+            element={
+              <PublicRoute>
+                <AuthForm />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/create-event"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <CreateEventForm />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-events/edit-event/:id"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <EditEventForm />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
 
-                    <Route
-                        path="/my-events"
-                        element={
-                            <ProtectedRoute>
-                                <DashboardLayout>
+          <Route
+            path="/my-events"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <MyEvents />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
 
-                                    <MyEvents/>
-                                </DashboardLayout>
-                                
-                            </ProtectedRoute>
-                        }
-                    />
+
+          <Route
+            path="/my-events/edit-event"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <EditEvent />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <EventDashboard />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <EventDashboard />
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/guest-dashboard" 
+            element={
+              <ProtectedRoute>
+                <GuestEventDashboard />
+              </ProtectedRoute>
+            }
+          />
 
 <Route
-                        path="/my-events/edit-event"
-                        element={
-                            <ProtectedRoute>
-                                <DashboardLayout>
-                                    <EditEvent />
-                                </DashboardLayout>
-                            </ProtectedRoute>
-                        }
-/>
-                    <Route
-                        path="/dashboard"
-                        element={
-                            <ProtectedRoute>
-                                <DashboardLayout>
-                                    <EventDashboard />
-                                </DashboardLayout>
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path="/"
-                        element={
-                            <ProtectedRoute>
-                                <DashboardLayout>
-                                    <EventDashboard />
-                                </DashboardLayout>
-                            </ProtectedRoute>
-                        }
-                    />
-
-<Route
-                        path="/test"
-                        element={
-                            <ProtectedRoute>
-                                
-                                    <Test />
-                              
-                            </ProtectedRoute>
-                        }
-                    />
-                </Routes>
-            </Router>
-        </AuthProvider>
-        
-    );
+            path="/test"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout>
+                  <Test/>
+                </DashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
 
 export default App;
+

@@ -15,7 +15,7 @@ import api from '../config/axios';
 const MyEvents = () => {
  
   const [events, setEvents] = useState([]);
-  const [eventId, setEventId] = useState('');
+ 
   const [loading, setLoading] = useState(true);
   const {setIsAuthenticated} = useAuth()
   // Fetch events
@@ -23,7 +23,7 @@ const MyEvents = () => {
     const fetchEvents = async () => {
       try {
         const response = await api.get('http://localhost:5000/api/events/get-my-events');
-        if (response.data.success) { setEventId(response.data.data._id);
+        if (response.data.success) { 
           setEvents(response.data.data);
           console.log(response.data.data);
           
@@ -49,6 +49,18 @@ const MyEvents = () => {
     setIsAuthenticated(false);
     navigate('/auth')
   }
+const handleEventdelete = (eventId)=>{
+  api.delete(`http://localhost:5000/api/events/my-events/${eventId}/delete-event`)
+  .then((response)=>{
+    console.log(response.data);
+    if(response.data.success){
+      setEvents(events.filter((event)=>event._id !== eventId));
+    }
+  })
+  .catch((error)=>{
+    console.error('Error deleting event:', error);
+  })
+}
 
   const handleEditEvent = (eventId) => {
     navigate(`/my-events/edit-event/${eventId}`);
@@ -98,7 +110,7 @@ const MyEvents = () => {
                     <Button variant="outline" className='mx-2' onClick={()=>handleEditEvent(event._id)}>Edit</Button>
 
                     
-                    <Button  variant='outline' className='mx-2'>Delete</Button>
+                    <Button  variant='outline' className='mx-2' onClick={()=>handleEventdelete(event._id)}>Delete</Button>
 
 
                     </div>
