@@ -22,7 +22,7 @@ const MyEvents = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await api.get('/api/events/get-my-events');
+        const response = await api.get('http://localhost:5000/api/events/get-my-events');
         if (response.data.success) { 
           setEvents(response.data.data);
           console.log(response.data.data);
@@ -50,7 +50,7 @@ const MyEvents = () => {
     navigate('/auth')
   }
 const handleEventdelete = (eventId)=>{
-  api.delete(`/api/events/my-events/${eventId}/delete-event`)
+  api.delete(`http://localhost:5000/api/events/my-events/${eventId}/delete-event`)
   .then((response)=>{
     console.log(response.data);
     if(response.data.success){

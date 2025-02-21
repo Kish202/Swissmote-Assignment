@@ -143,6 +143,13 @@ const verifyToken = async (req, res) => {
 };
 
 
+
+
+
+
+
+
+
 const Event = require('../models/Event');
 
 const attendeeEvent = require('../models/Eventattendess');
@@ -437,7 +444,7 @@ const editEvent = async (req, res) => {
             { new: true, runValidators: true }
         ).populate('host', 'username name email -_id');
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             data: updatedEvent,
             message: 'Event updated successfully'

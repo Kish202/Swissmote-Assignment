@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../config/axios'
+import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -36,12 +36,16 @@ const EditEventForm = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await api.get(
-          `/api/events/my-events/${id}`,
-          
+        const response = await axios.get(
+          `http://localhost:5000/api/events/my-events/${id}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          }
         );
 
-        const event = response.data.data;  // Notice the nested .data
+        const event = response.data;
         
         // Convert ISO dates to local datetime-local format
         const formatDate = (isoString) => {
@@ -115,12 +119,12 @@ const EditEventForm = () => {
         }
       });
 
-      const response = await api.put(`/api/events/my-events/edit-event/${id}`,
+      const response = await axios.put(`/api/events/my-events/edit-event/${id}`,
         formDataToSend,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-           
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }
       );

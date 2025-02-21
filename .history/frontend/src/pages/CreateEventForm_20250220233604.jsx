@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import api from '../config/axios'
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,15 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useNavigate } from 'react-router-dom';
 
-const EditEventForm = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+const CreateEventForm = () => {
   const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     hostName: '',
     eventName: '',
@@ -24,51 +20,13 @@ const EditEventForm = () => {
     description: '',
     startDate: '',
     endDate: '',
-    image: null,
-    currentImage: ''
+    image: null
   });
 
   const categories = [
     "Conference", "Workshop", "Seminar", "Meetup", 
     "Concert", "Exhibition", "Party", "Technology"
   ];
-
-  useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const response = await api.get(
-          `/api/events/my-events/${id}`,
-          
-        );
-
-        const event = response.data.data;  // Notice the nested .data
-        
-        // Convert ISO dates to local datetime-local format
-        const formatDate = (isoString) => {
-          const date = new Date(isoString);
-          return date.toISOString().slice(0, 16); // Format: YYYY-MM-DDThh:mm
-        };
-
-        setFormData({
-          hostName: event.hostName,
-          eventName: event.eventName,
-          category: event.category,
-          description: event.description,
-          startDate: formatDate(event.startDate),
-          endDate: formatDate(event.endDate),
-          image: null,
-          currentImage: event.image
-        });
-        
-        setFetchLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch event data');
-        setFetchLoading(false);
-      }
-    };
-
-    fetchEvent();
-  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -95,62 +53,76 @@ const EditEventForm = () => {
     }
   };
 
+  
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccess('');
-
+  
     try {
+      // Create FormData and append all fields
       const formDataToSend = new FormData();
-      
-      // Only append fields that have been modified
       Object.keys(formData).forEach(key => {
-        if (key !== 'currentImage') { // Skip the currentImage field
-          if (key === 'image' && formData[key] === null) {
-            // Don't append image if no new image was selected
-            return;
-          }
+        if (formData[key] !== null) {
           formDataToSend.append(key, formData[key]);
         }
       });
-
-      const response = await api.put(`/api/events/my-events/edit-event/${id}`,
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-           
-          }
+  
+      // Log FormData for debugging
+      console.log('Sending form data:');
+      for (let pair of formDataToSend.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+  
+      const { data } = await api.post('/events/create-event', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-      );
-
-      setSuccess('Event updated successfully!');
+      });
+  
+      setSuccess('Event created successfully!');
+      setFormData({
+        hostName: '',
+        eventName: '',
+        category: '',
+        description: '',
+        startDate: '',
+        endDate: '',
+        image: null
+      });
+  
+      // Use the provided toast from your utils
+      toast({
+        title: "Success",
+        description: "Event created successfully!"
+      });
+  
       setTimeout(() => {
         navigate('/dashboard');
       }, 1500);
-      
+  
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update event');
+      console.error('Error details:', err);
+      setError(err.response?.data?.message || 'Something went wrong');
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.response?.data?.message || "Failed to create event"
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  if (fetchLoading) {
-    return (
-      <Card className="w-full max-w-xl mx-auto">
-        <CardContent className="p-6">
-          <div className="text-center">Loading event data...</div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="w-full max-w-xl mx-auto overflow-y-auto scrollbar-hide border border-yellow-950">
+    // <div className='flex h-screen items-center '>
+
+    
+    <Card className="w-full max-w-xl mx-auto  overflow-y-auto scrollbar-hide border border-yellow-950">
       <CardHeader>
-        <CardTitle className="flex justify-center">Edit Event</CardTitle>
+        <CardTitle className="flex justify-center">Create New Event</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -247,34 +219,24 @@ const EditEventForm = () => {
 
           <div className="space-y-2">
             <Label htmlFor="image">Event Image</Label>
-            {formData.currentImage && (
-              <div className="mb-2">
-                <img 
-                  src={formData.currentImage} 
-                  alt="Current event" 
-                  className="w-32 h-32 object-cover rounded-md"
-                />
-              </div>
-            )}
             <Input
               id="image"
               name="image"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
+              required
             />
-            <p className="text-sm text-gray-500 mt-1">
-              Leave empty to keep current image
-            </p>
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Updating Event...' : 'Update Event'}
+            {loading ? 'Creating Event...' : 'Create Event'}
           </Button>
         </form>
       </CardContent>
     </Card>
+    // </div>
   );
 };
 
-export default EditEventForm;
+export default CreateEventForm;

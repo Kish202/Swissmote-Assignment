@@ -115,12 +115,12 @@ const EditEventForm = () => {
         }
       });
 
-      const response = await api.put(`/api/events/my-events/edit-event/${id}`,
+      const response = await axios.put(`/api/events/my-events/edit-event/${id}`,
         formDataToSend,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-           
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }
       );

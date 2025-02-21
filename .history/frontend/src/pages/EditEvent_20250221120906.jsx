@@ -115,15 +115,7 @@ const EditEventForm = () => {
         }
       });
 
-      const response = await api.put(`/api/events/my-events/edit-event/${id}`,
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-           
-          }
-        }
-      );
+      pair of formDataToSend.entries()) { console.log(pair[0], pair[1]); }
 
       setSuccess('Event updated successfully!');
       setTimeout(() => {

@@ -142,6 +142,57 @@ const verifyToken = async (req, res) => {
     }
 };
 
+// const { OAuth2Client } = require('google-auth-library');
+// const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// const googleLogin = async (req, res) => {
+//     try {
+//         const { token } = req.body;
+//         const ticket = await client.verifyIdToken({
+//             idToken: token,
+//             audience: process.env.GOOGLE_CLIENT_ID
+//         });
+
+//         const payload = ticket.getPayload();
+        
+//         // Find or create user
+//         let user = await User.findOne({ email: payload.email });
+//         if (!user) {
+//             user = await User.create({
+//                 email: payload.email,
+//                 name: payload.name,
+//                 username: payload.email.split('@')[0],
+//                 password: await bcrypt.hash(Math.random().toString(36), 10)
+//             });
+//         }
+
+//         // Generate JWT
+//         const jwtToken = generateToken(user._id);
+
+//         res.json({
+//             success: true,
+//             token: jwtToken,
+//             user: {
+//                 id: user._id,
+//                 name: user.name,
+//                 email: user.email
+//             }
+//         });
+//     } catch (error) {
+//         res.status(401).json({
+//             success: false,
+//             message: 'Invalid token'
+//         });
+//     }
+// };
+
+// router.get('/verify', protect, verifyToken);
+
+
+
+
+
+
 
 const Event = require('../models/Event');
 
@@ -437,7 +488,7 @@ const editEvent = async (req, res) => {
             { new: true, runValidators: true }
         ).populate('host', 'username name email -_id');
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             data: updatedEvent,
             message: 'Event updated successfully'

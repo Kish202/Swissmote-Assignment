@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import api from '../config/axios'
-import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,15 +6,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate, useParams } from 'react-router-dom';
+
+
+
+import api from './../config/axios';
 
 const EditEventForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(true);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  
+  const [eventId, setEventId] = useState('');
   const [formData, setFormData] = useState({
     hostName: '',
     eventName: '',
@@ -24,8 +27,7 @@ const EditEventForm = () => {
     description: '',
     startDate: '',
     endDate: '',
-    image: null,
-    currentImage: ''
+    image: null
   });
 
   const categories = [
@@ -34,41 +36,75 @@ const EditEventForm = () => {
   ];
 
   useEffect(() => {
-    const fetchEvent = async () => {
+    const fetchEventData = async () => {
       try {
-        const response = await api.get(
-          `/api/events/my-events/${id}`,
-          
-        );
-
-        const event = response.data.data;  // Notice the nested .data
+        const { data } = await api.get(`http://localhost:5000/api/events/my-events/${id}`);
         
-        // Convert ISO dates to local datetime-local format
-        const formatDate = (isoString) => {
-          const date = new Date(isoString);
-          return date.toISOString().slice(0, 16); // Format: YYYY-MM-DDThh:mm
-        };
-
+        console.log(data.data);
+        // Convert ISO dates to local datetime format for input fields
+        const startDate = new Date(data.data.startDate).toISOString().slice(0, 16);
+        const endDate = new Date(data.data.endDate).toISOString().slice(0, 16);
+        setEventId(data.data._id);
         setFormData({
-          hostName: event.hostName,
-          eventName: event.eventName,
-          category: event.category,
-          description: event.description,
-          startDate: formatDate(event.startDate),
-          endDate: formatDate(event.endDate),
-          image: null,
-          currentImage: event.image
+          hostName: data.data.hostName,
+          eventName: data.data.eventName,
+          category: data.data.category,
+          description: data.data.description,
+          startDate: startDate,
+          endDate: endDate,
+          image: data.data.image
         });
-        
-        setFetchLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch event data');
-        setFetchLoading(false);
+     
+      // Show existing image preview if available
+    if (data.data.image) {
+      // Add an image preview element in your JSX
+      const imgPreview = document.getElementById('imagePreview');
+      if (imgPreview) {
+        imgPreview.src = data.data.image;
+      }
+    }
+     
+     
+      } 
+      
+      
+
+      catch (err) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: err.response?.data?.message || "Failed to fetch event data"
+        });
       }
     };
 
-    fetchEvent();
-  }, [id]);
+    fetchEventData();
+  }, [id, toast]);
+
+  const validateDates = () => {
+    const start = new Date(formData.startDate);
+    const end = new Date(formData.endDate);
+
+    if (start >= end) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Dates",
+        description: "End date must be after start date"
+      });
+      return false;
+    }
+
+    if (start < new Date()) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Start Date",
+        description: "Start date cannot be in the past"
+      });
+      return false;
+    }
+
+    return true;
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,6 +124,28 @@ const EditEventForm = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          variant: "destructive",
+          title: "Invalid File",
+          description: "Please upload an image file"
+        });
+        e.target.value = '';
+        return;
+      }
+      
+      // Validate file size (e.g., 5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          variant: "destructive",
+          title: "File Too Large",
+          description: "Image size should be less than 5MB"
+        });
+        e.target.value = '';
+        return;
+      }
+
       setFormData(prev => ({
         ...prev,
         image: file
@@ -97,55 +155,72 @@ const EditEventForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    console.log(formData);
+    // Validate form data
+    if (!formData.eventName.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Input",
+        description: "Event name is required"
+      });
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Input",
+        description: "Description is required"
+      });
+      return;
+    }
+
+    if (!validateDates()) {
+      return;
+    }
+
     setLoading(true);
     setError('');
-    setSuccess('');
 
     try {
       const formDataToSend = new FormData();
-      
-      // Only append fields that have been modified
       Object.keys(formData).forEach(key => {
-        if (key !== 'currentImage') { // Skip the currentImage field
-          if (key === 'image' && formData[key] === null) {
-            // Don't append image if no new image was selected
-            return;
-          }
+        if (formData[key] !== null) {
           formDataToSend.append(key, formData[key]);
         }
       });
 
-      const response = await api.put(`/api/events/my-events/edit-event/${id}`,
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-           
-          }
-        }
-      );
+      // const  data = await api.post(
+      //   `http://localhost:5000/api/events/my-events/edit-event/${id}`,
+      //   formDataToSend,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data'
+      //     }
+      //   }
+      // );
 
-      setSuccess('Event updated successfully!');
-      setTimeout(() => {
+      toast({
+        title: "Success",
+        description: "Event updated successfully!"
+      });
+console.log(data);
+      
         navigate('/dashboard');
-      }, 1500);
+      
       
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update event');
+      setError(err.response?.data?.message || 'Something went wrong');
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.response?.data?.message || "Failed to update event"
+      });
     } finally {
       setLoading(false);
     }
   };
-
-  if (fetchLoading) {
-    return (
-      <Card className="w-full max-w-xl mx-auto">
-        <CardContent className="p-6">
-          <div className="text-center">Loading event data...</div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card className="w-full max-w-xl mx-auto overflow-y-auto scrollbar-hide border border-yellow-950">
@@ -157,12 +232,6 @@ const EditEventForm = () => {
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          
-          {success && (
-            <Alert>
-              <AlertDescription>{success}</AlertDescription>
             </Alert>
           )}
 
@@ -246,27 +315,26 @@ const EditEventForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image">Event Image</Label>
-            {formData.currentImage && (
-              <div className="mb-2">
-                <img 
-                  src={formData.currentImage} 
-                  alt="Current event" 
-                  className="w-32 h-32 object-cover rounded-md"
-                />
-              </div>
-            )}
-            <Input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              Leave empty to keep current image
-            </p>
-          </div>
+  <Label htmlFor="image">Event Image</Label>
+  {formData.image && (
+    <div className="mb-2">
+      <img 
+        id="imagePreview"
+        src={formData.existingImage} 
+        alt="Current event image" 
+        className="w-32 h-32 object-cover rounded-md"
+      />
+    </div>
+  )}
+  <Input
+    id="image"
+    name="image"
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+  />
+  <p className="text-sm text-gray-500">Leave empty to keep existing image</p>
+</div>
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Updating Event...' : 'Update Event'}
