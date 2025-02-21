@@ -23,7 +23,7 @@ api.interceptors.response.use(
         toast.error(error.response?.data?.message || 'An error occurred');
         if (error.response?.status === 401) {
             localStorage.removeItem('token');
-            window.location.href = '/login';
+            window.location.href = '/auth';
         }
         return Promise.reject(error);
     }

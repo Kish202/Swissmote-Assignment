@@ -9,10 +9,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import api from '../config/axios';
 import { useAuth } from '../context/AuthContext';
-
+ 
 const AuthForm = () => {
   const navigate = useNavigate();
-  const {setIsAuthenticated} = useAuth()
+  const     {setIsAuthenticated, setCurrentUser, setGuest} = useAuth()
   
   // Form states
   const [loginData, setLoginData] = useState({ 
@@ -131,6 +131,43 @@ const AuthForm = () => {
     setErrors(newErrors);
   };
 
+const handleGuesTlogin = async (e) => {
+e.preventDefault();
+  setIsLoading(true);
+  setErrors('');
+
+  try {
+    const response = await fetch('http://localhost:5000/api/auth/guest-login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Store token and user info
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setIsAuthenticated(true);
+      setCurrentUser(data.user);
+      setGuest(true);
+
+
+
+      // Redirect to events page
+      navigate('/test');
+    } else {
+      setErrors(data.message);
+    }
+  } catch (err) {
+    setErrors('Failed to login as guest');
+  } finally {
+    setIsLoading(false);
+  }
+
+}
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -139,8 +176,10 @@ const AuthForm = () => {
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        setIsAuthenticated(true);
-        navigate('/dashboard');
+        setCurrentUser(response.data.user);
+        console.log(response.data.user);
+                setIsAuthenticated(true);
+        navigate('/test');
       } else {
         setErrors(prev => ({
           ...prev,
@@ -194,9 +233,10 @@ setTabState("login");
     <div className="flex h-screen">
       <Card className="w-full max-w-md mx-auto my-auto">
         <Tabs value={tabState} onValueChange={setTabState} className="w-full p-4">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="register">Register</TabsTrigger>
+            <TabsTrigger value="guest-login">The Guest Login</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login">
@@ -260,7 +300,7 @@ setTabState("login");
                 </Button>
               </form>
             </CardContent>
-          </TabsContent>
+             </TabsContent>
 
           <TabsContent value="register">
             <CardHeader className="space-y-2">
@@ -373,9 +413,20 @@ setTabState("login");
                 </Button>
               </form>
             </CardContent>
-          </TabsContent>
+             </TabsContent>
+
+             <TabsContent value="guest-login">
+
+
+            <CardContent className='flex items-center justify-center'>
+             <Button variant="outline" className='border border-yellow-950 m-10' 
+             onClick={handleGuesTlogin}>    {isLoading ? 'Loading...' : 'Continue as Guest'} </Button>
+            </CardContent>
+             </TabsContent>
         </Tabs>
       </Card>
+
+
     </div>
   );
 };

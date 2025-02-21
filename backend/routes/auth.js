@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { register, login, verifyToken, createEvent, getAllEvents} = require( '../controllers/authController');
+const { register, login, verifyToken, createEvent, getAllEvents, guestLogin} = require( '../controllers/authController');
 const loginLimiter =  require('../middleware/rateLimiter');
 const validateLoginInput =require('../middleware/validateLoginInput');
 const protect = require('../middleware/errorHandler'); // Your JWT verification middleware
@@ -12,6 +12,6 @@ router.get('/verify', protect, verifyToken);
 // router.post('/google-login', googleLogin);
 router.post('/create-event', protect, createEvent);
 router.get('/get-all-events',getAllEvents);
-
+router.post('/guest-login', guestLogin);
 
 module.exports = router;

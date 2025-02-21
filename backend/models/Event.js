@@ -48,7 +48,38 @@ const eventSchema = new mongoose.Schema({
   image: {
     type: String,
     required: [true, 'Event image is required']
-  }
+  },
+
+
+  attendees: {
+    type: [{
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        joinedAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    default: [],
+    validate: {
+        validator: function(array) {
+            return array.every(item => item != null);
+        },
+        message: 'Attendees array cannot contain null values'
+    }
+},
+attendeeCount: {
+    type: Number,
+    default: 0,
+    min: 0
+}
+
+
+
+
 }, {
   timestamps: true
 });
@@ -57,6 +88,21 @@ const eventSchema = new mongoose.Schema({
 eventSchema.index({ host: 1, startDate: 1 });
 eventSchema.index({ category: 1 });
 
+
+
+// eventSchema.index({ 'attendees.userId': 1 });
 const Event = mongoose.model('Event', eventSchema);
 
 module.exports = Event;
+
+
+// // pre-save middleware to clean nulls and update count
+// eventSchema.pre('save', function(next) {
+//   // Remove null values
+//   this.attendees = this.attendees.filter(attendee => attendee != null);
+//   // Update attendee count
+//   this.attendeeCount = this.attendees.length;
+//   next();
+//   });
+
+
