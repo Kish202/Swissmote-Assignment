@@ -21,7 +21,7 @@ api_key='86xxxxxxx'
 api_secret='xxxxxxxx'
 
 2) cd frontend
-VITE_API_URL=https://localhost:5000
+VITE_API_URL=http://localhost:5000
 
  Then run npm run dev both in frontend plus backend!
 Now you have a happy fullstack project with you
