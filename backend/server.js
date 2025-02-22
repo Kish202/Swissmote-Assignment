@@ -14,13 +14,19 @@ const Event = require('./models/Event');
 const server = http.createServer(app);
 const io = require('socket.io')(server, {
     cors: {
-        origin: "http://localhost:5173", // Your React app URL
+        origin: "https://eventmanagement-nine-zeta.vercel.app", // Your React app URL
         methods: ["GET", "POST"]
     }
 });
 
 
-app.use(cors());
+app.use(cors({
+    origin: [
+      'https://eventmanagement-nine-zeta.vercel.app',
+      // Include any other domains you need
+    ],
+    credentials: true
+  }));
 app.use(express.json());
 app.use(fileUpload({
     useTempFiles:true  //temp file will start upload soon

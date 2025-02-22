@@ -13,7 +13,6 @@ import CreateEventForm from "./pages/CreateEventForm";
 import MyEvents from "./pages/MyEvents";
 import EditEvent from "./pages/EditEvent";
 import EditEventForm from "./pages/EditEvent";
-import Test from "./pages/Test";
 import GuestEventDashboard from "./pages/GuestEventdashboard";
 
 function App() {
@@ -99,21 +98,15 @@ function App() {
             path="/guest-dashboard" 
             element={
               <ProtectedRoute>
+                <DashboardLayout>
                 <GuestEventDashboard />
+                </DashboardLayout>
+                
               </ProtectedRoute>
             }
           />
 
-<Route
-            path="/test"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout>
-                  <Test/>
-                </DashboardLayout>
-              </ProtectedRoute>
-            }
-          />
+
         </Routes>
       </Router>
     </AuthProvider>

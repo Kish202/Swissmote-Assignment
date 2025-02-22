@@ -12,7 +12,7 @@ import { useAuth } from '../context/AuthContext';
  
 const AuthForm = () => {
   const navigate = useNavigate();
-  const     {setIsAuthenticated, setCurrentUser, setGuest} = useAuth()
+  const     {setIsAuthenticated, setCurrentUser, setGuest, isGuest, isAuthenticated} = useAuth()
   
   // Form states
   const [loginData, setLoginData] = useState({ 
@@ -132,40 +132,45 @@ const AuthForm = () => {
   };
 
 const handleGuesTlogin = async (e) => {
-e.preventDefault();
-  setIsLoading(true);
-  setErrors('');
 
-  try {
-    const response = await fetch('http://localhost:5000/api/auth/guest-login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+    setIsLoading(true);
+    setErrors('');
+  
+    try {
+      const response = await api.post('/api/auth/guest-login', {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      const data = response.data;
+  
+      if (data.success === true) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Update all auth states and wait for them to complete
+        await Promise.all([
+          new Promise(resolve => {
+            setIsAuthenticated(true);
+            setCurrentUser(data.user);
+            setGuest(true);
+            resolve();
+          })
+        ]);
+  console.log(isGuest);
+        // Navigate after states are updated
+        navigate('/guest-dashboard');
+      } else {
+        setErrors(data.message);
       }
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      // Store token and user info
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setIsAuthenticated(true);
-      setCurrentUser(data.user);
-      setGuest(true);
-
-
-
-      // Redirect to events page
-      navigate('/test');
-    } else {
-      setErrors(data.message);
+    } catch (err) {
+      setErrors('Failed to login as guest');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    setErrors('Failed to login as guest');
-  } finally {
-    setIsLoading(false);
-  }
+  
 
 }
   const handleLogin = async (e) => {
@@ -179,7 +184,7 @@ e.preventDefault();
         setCurrentUser(response.data.user);
         console.log(response.data.user);
                 setIsAuthenticated(true);
-        navigate('/test');
+        navigate('/dashboard');
       } else {
         setErrors(prev => ({
           ...prev,

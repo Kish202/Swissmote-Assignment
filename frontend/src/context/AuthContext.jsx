@@ -1,6 +1,5 @@
 // context/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
 import api from '../config/axios';
 
 const AuthContext = createContext(null);
@@ -17,23 +16,29 @@ export const AuthProvider = ({ children }) => {
 
 const checkAuth = async () => {
     const token = localStorage.getItem('token');
+ 
     if (token) {
         try {
             const response = await api.get('/api/auth/verify');
             if (response.data.success) {
+    
                 setIsAuthenticated(true);
             } else {
                 localStorage.removeItem('token');
+           
                 setIsAuthenticated(false);
             }
         } catch {
             localStorage.removeItem('token');
+            // console.log("in guest")
             setIsAuthenticated(false);
         }
     } else {
         setIsAuthenticated(false);
+        // console.log("in guest")
     }
     setIsLoading(false);
+    // console.log("in guest")
 };
 
 
