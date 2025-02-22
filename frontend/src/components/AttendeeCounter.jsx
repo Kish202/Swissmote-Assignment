@@ -6,7 +6,7 @@ import { Users } from 'lucide-react';
 
 const AttendeeCounter = ({ eventId }) => {
   const { attendees, updateAttendeeCount } = useAttendees();
-  const socket = useWebSocket('http://localhost:5000');
+  const socket = useWebSocket('https://event-managementsr.onrender.com');
 
   useEffect(() => {
     if (socket) {

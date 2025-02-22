@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import {
   Select,
   SelectContent,
@@ -14,7 +14,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { useAuth } from '../context/AuthContext';
-
+import api from '../config/axios';
 import {
     Tooltip,
     TooltipContent,
@@ -54,56 +54,27 @@ const GuestEventDashboard = () => {
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const {currentUser, setIsAuthenticated} = useAuth();
+  const {currentUser, setIsAuthenticated, isGuest, setGuest} = useAuth();
   const [socket, setSocket] = useState(null);
   
  
 
   
-  const [isGuest, setGuest] = useState(true);
-useEffect(() => {
-      const user = localStorage.getItem("user");
-      const User = JSON.parse(user);
-      console.log(User);
-    //   console.log(user.isGuest)
-    setGuest(User.isGuest);
-},[]);
 
-
-
-
-//   const GuestActionButton = ({ children, tooltipText }) => {
-
-//     if (isGuest) {
-//       return (
-//         <TooltipProvider>
-//           <Tooltip>
-//             <TooltipTrigger asChild>
-//               <div className="w-full md:w-auto">
-//                 {children}
-//               </div>
-//             </TooltipTrigger>
-//             <TooltipContent>
-//               <p className='text-yellow-900'>{tooltipText}</p>
-//             </TooltipContent>
-//           </Tooltip>
-//         </TooltipProvider>
-//       );
-//     }
-    
-//   };
-
-
-
-
-  
+// useEffect(() => {
+//       const user = localStorage.getItem("user");
+//       const User = JSON.parse(user);
+//       console.log(User);
+//       // console.log(user.isGuest)
+//     setGuest(User.isGuest);
+// },[]);
 
 
   // Fetch events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/events/get-all-events');
+        const response = await api.get('/api/events/get-all-events');
         if (response.data.success) {
           setEvents(response.data.data);
           setFilteredEvents(response.data.data);

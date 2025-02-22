@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../config/axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -66,13 +66,13 @@ const CreateEventForm = () => {
         formDataToSend.append(key, formData[key]);
       });
 
-      const response = await axios.post(
-        'http://localhost:5000/api/events/create-event',
+      const response = await api.post(
+        '/api/events/create-event',
         formDataToSend,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem('token')}` // If using JWT
+    
           }
         }
       );
