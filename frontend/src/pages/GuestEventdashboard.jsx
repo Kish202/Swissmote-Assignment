@@ -57,19 +57,30 @@ const GuestEventDashboard = () => {
   const {currentUser, setIsAuthenticated, isGuest, setGuest} = useAuth();
   const [socket, setSocket] = useState(null);
   
- 
+  useEffect(() => {
+    const newSocket = io('https://event-managementsr.onrender.com');
+    setSocket(newSocket);
 
-  
+    // Socket event listeners
+    newSocket.on('attendeeUpdate', ({ eventId, attendeeCount, attendees }) => {
+      setEvents(prevEvents => 
+        prevEvents.map(event => 
+          event._id === eventId 
+            ? { ...event, attendeeCount, attendees }
+            : event
+        )
+      );
+    });
 
-// useEffect(() => {
-//       const user = localStorage.getItem("user");
-//       const User = JSON.parse(user);
-//       console.log(User);
-//       // console.log(user.isGuest)
-//     setGuest(User.isGuest);
-// },[]);
+    newSocket.on('joinEventError', ({ message }) => {
+      toast.error(message);
+    });
 
-
+   
+    return () => {
+      newSocket.close();
+    };
+  }, []);
   // Fetch events
   useEffect(() => {
     const fetchEvents = async () => {
@@ -128,10 +139,11 @@ const GuestEventDashboard = () => {
     return event.attendees.some(a => a.userId === currentUser.id);
   };
 
+  
   return (
     <div className="min-h-screen px-4">
       <div className="container mx-auto max-w-3xl mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
          
         <GuestActionButton tooltipText="Login to access your events" isGuest={isGuest}>
             <Button 
@@ -167,6 +179,7 @@ const GuestEventDashboard = () => {
               <Calendar mode="single" selected={date} onSelect={handleDateChange} initialFocus />
             </PopoverContent>
           </Popover>
+          <Button variant="outline" onClick={handleLogOut}> Logout</Button>
         </div>
 
         <div className="grid grid-cols-1 gap-6">
@@ -184,7 +197,7 @@ const GuestEventDashboard = () => {
     className="w-full md:w-20 h-40 md:h-20 rounded-lg md:rounded-full object-cover"
   />
   
-  {/* Content Container */}
+ 
   <CardContent className="flex-1 w-full py-2 space-y-3">
     {/* Title and Date Row */}
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
@@ -195,23 +208,23 @@ const GuestEventDashboard = () => {
       </span>
     </div>
 
-    {/* Category Badge */}
+   
     <div className="text-sm bg-gray-100 px-2 py-1 rounded-full w-fit">
       {event.category}
     </div>
 
-    {/* Description and Details */}
+   
     <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center justify-between text-sm text-gray-600">
-      {/* Description */}
+      
       <div className="max-w-prose break-words">{event.description}</div>
       
-      {/* Attendees and Join Button */}
+     
       <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4">
         <span>Attendees: {event.attendeeCount}</span>
         <GuestActionButton tooltipText="Login to join this event" isGuest={isGuest}>
                   <Button
                   variant="outline"
-                    // onClick={() => handleJoinEvent(event._id)}
+                 
                     disabled={isGuest || isUserJoined(event)}
                     className="w-full md:w-auto"
                   >
@@ -220,7 +233,7 @@ const GuestEventDashboard = () => {
                 </GuestActionButton>
       </div>
 
-      {/* Host Info */}
+     
       <div className="text-sm">
         Hosted by {event.hostName}
       </div>

@@ -98,9 +98,9 @@ function App() {
             path="/guest-dashboard" 
             element={
               <ProtectedRoute>
-                <DashboardLayout>
+               
                 <GuestEventDashboard />
-                </DashboardLayout>
+           
                 
               </ProtectedRoute>
             }

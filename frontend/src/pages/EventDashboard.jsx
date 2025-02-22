@@ -51,7 +51,7 @@ const EventDashboard = () => {
       toast.error(message);
     });
 
-    // Cleanup on component unmount
+   
     return () => {
       newSocket.close();
     };
@@ -168,14 +168,14 @@ const EventDashboard = () => {
           ) : (
             filteredEvents.map((event) => (
  <Card key={event._id} className="flex flex-col md:flex-row items-start md:items-center p-4 gap-4 md:gap-6 shadow-2xl">
-  {/* Image */}
+
   <img 
     src={event.image} 
     alt={event.eventName} 
     className="w-full md:w-20 h-40 md:h-20 rounded-lg md:rounded-full object-cover"
   />
   
-  {/* Content Container */}
+ 
   <CardContent className="flex-1 w-full py-2 space-y-3">
     {/* Title and Date Row */}
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
@@ -186,7 +186,7 @@ const EventDashboard = () => {
       </span>
     </div>
 
-    {/* Category Badge */}
+   
     <div className="text-sm bg-gray-100 px-2 py-1 rounded-full w-fit">
       {event.category}
     </div>
@@ -198,7 +198,10 @@ const EventDashboard = () => {
       
       {/* Attendees and Join Button */}
       <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4">
+        <div className='flex items-center gap-1'>
+    <div   className='h-2 w-2 bg-green-600 rounded-full animate-pulse '></div>
         <span>Attendees: {event.attendeeCount}</span>
+        </div>
         <Button
           onClick={() => handleJoinEvent(event._id)}
           disabled={!currentUser || isUserJoined(event)}
@@ -208,7 +211,7 @@ const EventDashboard = () => {
         </Button>
       </div>
 
-      {/* Host Info */}
+      
       <div className="text-sm">
         Hosted by {event.hostName}
       </div>

@@ -6,12 +6,6 @@ const ProtectedRoute = ({ children }) => {
     const location = useLocation();
     const currentPath = location.pathname;
 
-    console.log('Debug:', {
-        user: currentUser,
-        isGuest: currentUser?.isGuest,
-        path: currentPath
-    });
-
 
 
 
