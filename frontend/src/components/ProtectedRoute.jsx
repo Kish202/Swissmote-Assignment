@@ -6,15 +6,6 @@ const ProtectedRoute = ({ children }) => {
     const location = useLocation();
     const currentPath = location.pathname;
 
-    console.log('Debug:', {
-        user: currentUser,
-        isGuest: currentUser?.isGuest,
-        path: currentPath
-    });
-
-
-
-
     if (isLoading) {
         return <div>Loading...</div>; // Or your loading spinner
     }

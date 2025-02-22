@@ -14,7 +14,7 @@ const Event = require('./models/Event');
 const server = http.createServer(app);
 const io = require('socket.io')(server, {
     cors: {
-        origin: "https://eventmanagement-nine-zeta.vercel.app", // Your React app URL
+        origin: "http://localhost:5173", // Your React app URL
         methods: ["GET", "POST"]
     }
 });
@@ -22,7 +22,7 @@ const io = require('socket.io')(server, {
 
 app.use(cors({
     origin: [
-      'https://eventmanagement-nine-zeta.vercel.app',
+      'http://localhost:5173',
       // Include any other domains you need
     ],
     credentials: true
