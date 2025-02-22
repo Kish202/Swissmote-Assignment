@@ -38,14 +38,14 @@ const AuthForm = () => {
   
 
   useEffect(() => {
-    // Load registration data from localStorage on component mount
+
     const savedData = localStorage.getItem('registrationData');
     if (savedData) {
       setRegisterData(JSON.parse(savedData));
     }
   }, []);
 
-  // Validation functions
+ 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -149,7 +149,7 @@ const handleGuesTlogin = async (e) => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Update all auth states and wait for them to complete
+      
         await Promise.all([
           new Promise(resolve => {
             setIsAuthenticated(true);
@@ -159,7 +159,7 @@ const handleGuesTlogin = async (e) => {
           })
         ]);
   console.log(isGuest);
-        // Navigate after states are updated
+        
         navigate('/guest-dashboard');
       } else {
         setErrors(data.message);

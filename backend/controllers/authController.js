@@ -129,7 +129,7 @@ console.log({
 // controllers/authController.js
 const verifyToken = async (req, res) => {
     try {
-        // Token is already verified by middleware
+        
         res.json({
             success: true,
             user: req.user
@@ -222,7 +222,7 @@ const createEvent = async (req, res) => {
             image: result.secure_url
         });
 
-        // Update user's createdEvents array
+      
         await User.findByIdAndUpdate(
             req.user._id,
             { $push: { createdEvents: event._id } },
@@ -247,10 +247,10 @@ const createEvent = async (req, res) => {
 
 const getAllEvents = async (req, res) => {
     try {
-        // Fetch all events and populate host details
+        
         const events = await Event.find()
-            .populate('host', 'username -_id') // Populate host details but exclude password
-            .sort({ createdAt: -1 }); // Sort by newest first
+            .populate('host', 'username -_id') 
+            .sort({ createdAt: -1 }); 
 
         res.status(200).json({
             success: true,
@@ -270,17 +270,17 @@ const getAllEvents = async (req, res) => {
 
 const getMyEvents = async (req, res) => {
     try {
-        // Get authenticated user's ID from req.user (set by auth middleware)
+     
         const userId = req.user._id;
 
-        // Find all events where the host is the current user
+        
         const events = await Event.find({ host: userId })
             .populate({
                 path: 'host',
-                select: 'username name email -_id' // Include specific user fields, exclude _id
+                select: 'username name email -_id' 
             })
-            .sort({ startDate: 1 }) // Sort by start date ascending
-            .select('-__v'); // Exclude version key
+            .sort({ startDate: 1 }) 
+            .select('-__v');
 
         res.status(200).json({
             success: true,
@@ -365,28 +365,9 @@ const editEvent = async (req, res) => {
             hostName
         } = req.body;
 
-        // // Validate dates if they are being updated
-        // if (startDate || endDate) {
-        //     const start = new Date(startDate || event.startDate);
-        //     const end = new Date(endDate || event.endDate);
-        //     const now = new Date();
+ 
 
-        //     if (start < now) {
-        //         return res.status(400).json({
-        //             success: false,
-        //             message: 'Start date cannot be in the past'
-        //         });
-        //     }
-
-        //     if (end < start) {
-        //         return res.status(400).json({
-        //             success: false,
-        //             message: 'End date must be after start date'
-        //         });
-        //     }
-        // }
-
-        // Handle image update if new image is uploaded
+       
         let imageUrl = event.image; // Keep existing image by default
         if (req.files && req.files.image) {
             const file = req.files.image;
@@ -399,7 +380,7 @@ const editEvent = async (req, res) => {
                 });
             }
 
-            // Delete original image from Cloudinary if it exists
+            
             if (event.image) {
                 // Extract public_id from the URL
                 const publicId = event.image.split('/').slice(-1)[0].split('.')[0];
@@ -410,7 +391,7 @@ const editEvent = async (req, res) => {
                     await cloudinary.uploader.destroy(fullPublicId);
                 } catch (deleteError) {
                     console.error('Error deleting old image:', deleteError);
-                    // Continue with upload even if delete fails
+                
                 }
             }
 
@@ -559,17 +540,17 @@ const deleteEvent = async (req, res) => {
                 await cloudinary.uploader.destroy(fullPublicId);
             } catch (deleteError) {
                 console.error('Error deleting image from Cloudinary:', deleteError);
-                // Continue with event deletion even if image deletion fails
+                
             }
         }
 
-        // Remove event from user's createdEvents array
+        
         await User.findByIdAndUpdate(
             userId,
             { $pull: { createdEvents: eventId } }
         );
 
-        // Delete the event
+        
         await Event.findByIdAndDelete(eventId);
 
         res.status(200).json({
@@ -588,13 +569,13 @@ const deleteEvent = async (req, res) => {
 };
 
 
-// Add this to your existing authController.js
+
 
 const guestLogin = async (req, res) => {
     try {
 
 
-        // Find existing guest user or create new one
+       
         let guestUser = await User.findOne({ 
             username: 'guest_user',
             isGuest: true 

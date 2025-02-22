@@ -41,9 +41,9 @@ const EditEventForm = () => {
           
         );
 
-        const event = response.data.data;  // Notice the nested .data
+        const event = response.data.data;  
         
-        // Convert ISO dates to local datetime-local format
+    
         const formatDate = (isoString) => {
           const date = new Date(isoString);
           return date.toISOString().slice(0, 16); // Format: YYYY-MM-DDThh:mm
@@ -104,7 +104,7 @@ const EditEventForm = () => {
     try {
       const formDataToSend = new FormData();
       
-      // Only append fields that have been modified
+    
       Object.keys(formData).forEach(key => {
         if (key !== 'currentImage') { // Skip the currentImage field
           if (key === 'image' && formData[key] === null) {
