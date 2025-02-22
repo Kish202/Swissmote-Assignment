@@ -33,7 +33,7 @@ const EventDashboard = () => {
   const [socket, setSocket] = useState(null);
   
   useEffect(() => {
-    const newSocket = io('https://event-managementsr.onrender.com');
+    const newSocket = io('http://localhost:5000');
     setSocket(newSocket);
 
     // Socket event listeners
