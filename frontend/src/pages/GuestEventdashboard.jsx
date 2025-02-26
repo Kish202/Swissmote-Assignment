@@ -22,7 +22,7 @@ import {
     TooltipTrigger,
   } from "@/components/ui/tooltip"
 import { useNavigate } from 'react-router-dom';
-
+import { io } from 'socket.io-client';
 const categories = ["All", "Conference", "Workshop", "Seminar", "Meetup", "Concert", "Exhibition", "Party", "Technology"];
 
 

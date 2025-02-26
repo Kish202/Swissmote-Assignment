@@ -4,13 +4,15 @@ const loginLimiter =  require('../middleware/rateLimiter');
 const validateLoginInput =require('../middleware/validateLoginInput');
 const protect = require('../middleware/errorHandler'); // Your JWT verification middleware
 
+const Guestaccess = require('../middleware/GuestToken');
+
 router.post('/register', register);
 router.post('/login', validateLoginInput, login);
 // router.post('/login', loginLimiter, validateLoginInput, login);
 router.get('/verify', protect, verifyToken);
 // routes/auth.js
 // router.post('/google-login', googleLogin);
-router.post('/create-event', protect, createEvent);
+router.post('/create-event', protect,Guestaccess, createEvent);
 router.get('/get-all-events',getAllEvents);
 router.post('/guest-login', guestLogin);
 

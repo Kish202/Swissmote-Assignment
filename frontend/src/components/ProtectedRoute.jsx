@@ -34,9 +34,9 @@ if (isGuest) {
     }
 
     // If authenticated as regular user and trying to access guest dashboard
-    if (isAuthenticated && !isGuest && currentPath === '/guest-dashboard') {
-        return <Navigate to="/dashboard" replace />;
-    }
+    // if (isAuthenticated && !isGuest && currentPath === '/guest-dashboard') {
+    //     return <Navigate to="/dashboard" replace />;
+    // }
 
     return children;
 };
