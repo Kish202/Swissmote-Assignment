@@ -25,3 +25,4 @@ VITE_API_URL=http://localhost:5000
 
  Then run npm run dev both in frontend plus backend!
 Now you have a happy fullstack project with you
+https://eventmanagement-nine-zeta.vercel.app/auth
