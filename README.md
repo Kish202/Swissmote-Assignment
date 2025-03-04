@@ -14,11 +14,11 @@ set .env file
 MONGODB_URI=mongodb+srv:Your Url
 
 PORT=5000
-JWT_SECRET=your_very_secure_secret_key
-CLOUDINARY_URL=cloudinary:xxxx
-Cloud_Name='xxxxx'
-api_key='86xxxxxxx' 
-api_secret='xxxxxxxx'
+JWT_SECRET=your_very_secure_secret_key.
+CLOUDINARY_URL=cloudinary:xxxx.
+Cloud_Name='xxxxx'.
+api_key='86xxxxxxx'.
+api_secret='xxxxxxxx'.
 
 2) cd frontend
 VITE_API_URL=http://localhost:5000
