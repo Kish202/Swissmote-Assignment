@@ -94,7 +94,7 @@ Once both servers are up and running, open your browser and visit the frontend:
 - **Database**: MongoDB Atlas
 - **Authentication**: JWT (JSON Web Tokens)
 - **Image Hosting**: Cloudinary
-
+  **RealTime Message**:Web Sockets
 ## Contributing
 Contributions are welcome! Please follow these steps:
 1. Fork the repository.
